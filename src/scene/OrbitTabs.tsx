@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { RoundedBox, Text, Billboard } from '@react-three/drei'
 import * as THREE from 'three'
-import { useStory, TopicId } from '../state/useStory'
+import { useStory, type TopicId } from '../state/useStory'
 
 interface TabDef {
   id: TopicId

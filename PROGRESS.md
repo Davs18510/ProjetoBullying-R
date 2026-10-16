@@ -1,6 +1,18 @@
 # PROGRESS.md — Projeto Bullying Site
 
-## Fase atual: FASE 1 ✅ (Cena 3D do hub)
+## Fase atual: FASE 2 ✅ (Conteúdo e painel de tópicos)
+
+### Arquivos criados na Fase 2
+- `src/content/topics.ts` — 6 tópicos, texto fiel ao docx (nota: "segundo gráficos" e "extrema prioridade  e urgência" preservados do original)
+- `src/ui/TopicPanel.tsx` — painel vidro com slide-in CSS, badge apresentador, StoryNav, CVV note, Esc/setas
+- `src/ui/StoryNav.tsx` — dots de progresso (pílula aqua no ativo)
+- `src/ui/MobileMenu.tsx` — menu 2D cards glass para mobile/sem WebGL
+
+### Erros de digitação detectados no documento original (para decisão do usuário)
+1. Tópico 02, §2: "segundo **gráficos**" (deveria ser "segundo **gráfico**")
+2. Tópico 05, §3: "extrema prioridade**  **e urgência" (espaço duplo)
+
+## Fase 1 ✅ (Cena 3D do hub)
 
 ### Arquivos criados na Fase 1
 - `src/state/useStory.ts` — Zustand store (view, openTopic, close, next, prev)

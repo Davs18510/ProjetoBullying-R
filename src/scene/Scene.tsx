@@ -1,6 +1,6 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Environment, OrbitControls } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useStory } from '../state/useStory'
 import { CentralModel } from './CentralModel'
@@ -45,17 +45,17 @@ function SceneContent() {
     <>
       <CameraRig />
 
-      {/* Lights */}
-      <ambientLight intensity={0.5} color="#d4f0ff" />
+      {/* Lights - Pure offline Frutiger Aero luminous lighting */}
+      <ambientLight intensity={0.65} color="#d4f0ff" />
+      <hemisphereLight args={['#a8e4ff', '#7ed957', 0.65]} />
       <directionalLight
         position={[4, 6, 3]}
-        intensity={1.2}
+        intensity={1.3}
         color="#ffffff"
         castShadow={false}
       />
-      <directionalLight position={[-3, 2, -4]} intensity={0.3} color="#a8e4ff" />
-
-      <Environment preset="city" background={false} />
+      <directionalLight position={[-3, 2, -4]} intensity={0.4} color="#a8e4ff" />
+      <pointLight position={[0, 3, 2]} intensity={0.5} color="#ffffff" distance={10} />
 
       <Island />
       <CentralModel />
@@ -87,7 +87,9 @@ export function Scene() {
       frameloop="always"
       style={{ width: '100%', height: '100%' }}
     >
-      <SceneContent />
+      <Suspense fallback={null}>
+        <SceneContent />
+      </Suspense>
     </Canvas>
   )
 }
