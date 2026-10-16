@@ -1,6 +1,16 @@
 # PROGRESS.md — Projeto Bullying Site
 
-## Fase atual: FASE 0 ✅ (Inventário + Scaffold)
+## Fase atual: FASE 1 ✅ (Cena 3D do hub)
+
+### Arquivos criados na Fase 1
+- `src/state/useStory.ts` — Zustand store (view, openTopic, close, next, prev)
+- `src/scene/Scene.tsx` — Canvas principal, luzes, camera rig com lerp
+- `src/scene/CentralModel.tsx` — modelo GLB auto-escalado (altura alvo 2u), rotação em hub
+- `src/scene/Bubbles.tsx` — 14 bolhas flutuantes com Float + MeshPhysicalMaterial
+- `src/scene/Island.tsx` — disco verde-grama + 3 anéis aqua + ContactShadows
+- `src/scene/OrbitTabs.tsx` — 6 abas orbitais RoundedBox+Billboard, hover glow/escala
+
+## Fase 0 ✅ (Inventário + Scaffold)
 
 ## Decisões registradas
 - Stack: Vite + React 18 + TS, R3F, Drei, Zustand, WebR, CodeMirror, Nunito Sans
