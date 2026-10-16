@@ -1,7 +1,5 @@
-import { useRef, useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useMemo } from 'react'
 import { Float } from '@react-three/drei'
-import * as THREE from 'three'
 import { useStory } from '../state/useStory'
 
 const BUBBLE_COUNT = 14

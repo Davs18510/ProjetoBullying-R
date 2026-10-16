@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, Component, type ReactNode } from 'react'
+import { useEffect, useCallback, Component, type ReactNode } from 'react'
 import './styles/theme.css'
 import { Scene } from './scene/Scene'
 import { TopicPanel } from './ui/TopicPanel'

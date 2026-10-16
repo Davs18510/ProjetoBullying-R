@@ -1,4 +1,4 @@
-import { useStory, TOPIC_ORDER, type TopicId } from '../state/useStory'
+import { useStory } from '../state/useStory'
 import { TOPICS } from '../content/topics'
 
 export function MobileMenu() {
@@ -33,7 +33,7 @@ export function MobileMenu() {
         </p>
       </div>
 
-      {TOPICS.map((topic, i) => (
+      {TOPICS.map((topic) => (
         <button
           key={topic.id}
           id={`mobile-card-${topic.id}`}
