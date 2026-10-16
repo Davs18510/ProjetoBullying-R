@@ -1,6 +1,12 @@
 # PROGRESS.md — Projeto Bullying Site
 
-## Fase atual: FASE 2 ✅ (Conteúdo e painel de tópicos)
+## Fase atual: FASE 2 ✅ (Conteúdo e painel de tópicos testados e corrigidos)
+
+### Correções críticas da tela branca (resolvidas)
+1. **`SyntaxError: TopicId`**: com `verbatimModuleSyntax: true`, `OrbitTabs.tsx` precisava importar como `type TopicId`.
+2. **403 Forbidden no `Environment preset="city"`**: Drei tentava baixar HDR de `raw.githack.com` bloqueado pelo Cloudflare. Substituído por iluminação offline nativa Frutiger Aero (luz hemisférica céu/grama + direcional + pontual).
+3. **`Suspense` no Canvas**: `SceneContent` envolvido em `<Suspense fallback={null}>` dentro do Canvas e modelo protegido com `ModelErrorBoundary`.
+4. **Build limpo**: remoção de imports não utilizados (`noUnusedLocals`); `npm run build` passa com 0 erros.
 
 ### Arquivos criados na Fase 2
 - `src/content/topics.ts` — 6 tópicos, texto fiel ao docx (nota: "segundo gráficos" e "extrema prioridade  e urgência" preservados do original)
