@@ -1,37 +1,61 @@
 import { Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useStory } from '../state/useStory'
 import { CentralModel } from './CentralModel'
+import { HouseModel } from './HouseModel'
 import { Bubbles } from './Bubbles'
 import { Island } from './Island'
-import { OrbitTabs } from './OrbitTabs'
 import { SchoolBackground } from './SchoolBackground'
 
-// Camera poses
-const HUB_POS = new THREE.Vector3(0, 1.15, 7.2)
-const HUB_TARGET = new THREE.Vector3(0, 0, 0)
-const TOPIC_POS = new THREE.Vector3(-1.8, 1.3, 5.5)
-const TOPIC_TARGET = new THREE.Vector3(0, 0.2, 0)
+// Dynamic camera poses per section for smooth storytelling zooms
+const SECTION_CAMERA_POSES: { pos: THREE.Vector3; target: THREE.Vector3 }[] = [
+  // 0: Intro (wide panoramic view)
+  {
+    pos: new THREE.Vector3(0, 1.2, 6.8),
+    target: new THREE.Vector3(0, 0.05, 0),
+  },
+  // 1: Mapeamento (smooth zoom into the rotating 3D character)
+  {
+    pos: new THREE.Vector3(0, 0.85, 4.6),
+    target: new THREE.Vector3(0, 0.15, 0),
+  },
+  // 2: A Prática (dynamic perspective zoom)
+  {
+    pos: new THREE.Vector3(0, 0.9, 4.4),
+    target: new THREE.Vector3(0, 0.2, 0),
+  },
+  // 3: Denúncias (focused central zoom)
+  {
+    pos: new THREE.Vector3(0, 0.85, 4.6),
+    target: new THREE.Vector3(0, 0.15, 0),
+  },
+  // 4: Saúde Mental (closer, intimate focal zoom)
+  {
+    pos: new THREE.Vector3(0, 0.8, 4.3),
+    target: new THREE.Vector3(0, 0.2, 0),
+  },
+  // 5: Conclusão / Soluções (zoomed on the 3D House sanctuary model)
+  {
+    pos: new THREE.Vector3(0, 0.75, 4.4),
+    target: new THREE.Vector3(0, 0.25, 0),
+  },
+]
 
-const LERP_SPEED = 2.5
+const LERP_SPEED = 2.6
 
 function CameraRig() {
   const { camera } = useThree()
-  const view = useStory((s) => s.view)
-  const isPanelOpen = view !== 'hub'
+  const activeSection = useStory((s) => s.activeSection)
 
   useFrame((_, delta) => {
-    const targetPos = isPanelOpen ? TOPIC_POS : HUB_POS
-    const targetLook = isPanelOpen ? TOPIC_TARGET : HUB_TARGET
-    camera.position.lerp(targetPos, delta * LERP_SPEED)
+    const pose = SECTION_CAMERA_POSES[activeSection] || SECTION_CAMERA_POSES[0]
+    camera.position.lerp(pose.pos, delta * LERP_SPEED)
 
-    // Lerp lookAt via a dummy target
     const currentTarget = new THREE.Vector3()
     camera.getWorldDirection(currentTarget)
     currentTarget.multiplyScalar(10).add(camera.position)
-    currentTarget.lerp(targetLook, delta * LERP_SPEED)
+    currentTarget.lerp(pose.target, delta * LERP_SPEED)
     camera.lookAt(currentTarget)
   })
 
@@ -39,60 +63,59 @@ function CameraRig() {
 }
 
 function SceneContent() {
-  const view = useStory((s) => s.view)
-  const isPanelOpen = view !== 'hub'
+  const activeSection = useStory((s) => s.activeSection)
+  const isConclusion = activeSection === 5
 
   return (
     <>
       <CameraRig />
 
-      {/* Atmospheric sunset fog blending the distant school with the golden horizon */}
-      <fog attach="fog" args={['#d67b5e', 9, 26]} />
+      {/* Soft atmospheric daylight sky fog */}
+      <fog attach="fog" args={['#eaf8ff', 12, 30]} />
 
-      {/* Lights - Nostalgic Golden Sunset Lighting */}
-      <ambientLight intensity={0.45} color="#fff1de" />
-      <hemisphereLight args={['#ffbe69', '#4d3846', 0.85]} />
+      {/* Fresh Daylight Frutiger Aero Lighting */}
+      <ambientLight intensity={0.65} color="#d4f0ff" />
+      <hemisphereLight args={['#a8e4ff', '#7ed957', 0.75]} />
       <directionalLight
-        position={[6, 5, 4]}
-        intensity={1.75}
-        color="#ffc87a"
+        position={[5, 8, 4]}
+        intensity={1.35}
+        color="#ffffff"
         castShadow={false}
       />
-      <directionalLight position={[-4, 3, -4]} intensity={0.45} color="#9d7bb0" />
-      <pointLight position={[0, 2.5, 3]} intensity={0.55} color="#ffe2b0" distance={10} />
+      <directionalLight position={[-4, 3, -4]} intensity={0.35} color="#a8eeff" />
+      <pointLight position={[0, 3, 2]} intensity={0.4} color="#ffffff" distance={10} />
 
-      {/* Nostalgic school campus in the background */}
+      {/* Clean modern school in the background */}
       <SchoolBackground />
 
+      {/* Lush green grass field */}
       <Island />
-      <CentralModel />
-      <Bubbles />
-      <OrbitTabs />
 
-      <OrbitControls
-        enabled={!isPanelOpen}
-        enablePan={false}
-        minDistance={4.5}
-        maxDistance={9.5}
-        minPolarAngle={Math.PI / 6}
-        maxPolarAngle={Math.PI / 2.15}
-        makeDefault
-      />
+      {/* Central 3D Models: Character during topics 0-4, House model on conclusion (5) */}
+      <CentralModel />
+      {isConclusion && <HouseModel />}
+
+      {/* Floating crystalline bubbles */}
+      <Bubbles />
     </>
   )
 }
 
 export function Scene() {
-  const view = useStory((s) => s.view)
-  const isPanelOpen = view !== 'hub'
-
   return (
     <Canvas
-      dpr={isPanelOpen ? 1 : [1, 1.5]}
-      camera={{ position: [0, 1.15, 7.2], fov: 40 }}
+      dpr={[1, 1.5]}
+      camera={{ position: [0, 1.2, 6.8], fov: 40 }}
       gl={{ antialias: true }}
       frameloop="always"
-      style={{ width: '100%', height: '100%' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100vh',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
     >
       <Suspense fallback={null}>
         <SceneContent />

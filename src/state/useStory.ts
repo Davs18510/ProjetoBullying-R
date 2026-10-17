@@ -3,10 +3,19 @@ import { create } from 'zustand'
 export type TopicId = 'intro' | 'mapeamento' | 'pratica' | 'denuncias' | 'saude' | 'solucoes'
 export type View = 'hub' | TopicId
 
-const TOPIC_ORDER: TopicId[] = ['intro', 'mapeamento', 'pratica', 'denuncias', 'saude', 'solucoes']
+export const TOPIC_ORDER: TopicId[] = [
+  'intro',
+  'mapeamento',
+  'pratica',
+  'denuncias',
+  'saude',
+  'solucoes',
+]
 
 interface StoryState {
+  activeSection: number
   view: View
+  setActiveSection: (index: number) => void
   openTopic: (id: TopicId) => void
   close: () => void
   next: () => void
@@ -14,25 +23,53 @@ interface StoryState {
 }
 
 export const useStory = create<StoryState>((set, get) => ({
-  view: 'hub',
+  activeSection: 0,
+  view: 'intro',
 
-  openTopic: (id) => set({ view: id }),
+  setActiveSection: (index: number) => {
+    const clamped = Math.max(0, Math.min(TOPIC_ORDER.length - 1, index))
+    set({
+      activeSection: clamped,
+      view: TOPIC_ORDER[clamped],
+    })
+  },
 
-  close: () => set({ view: 'hub' }),
+  openTopic: (id: TopicId) => {
+    const idx = TOPIC_ORDER.indexOf(id)
+    if (idx !== -1) {
+      set({ activeSection: idx, view: id })
+      const el = document.getElementById(`section-${id}`)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  },
+
+  close: () => {
+    set({ activeSection: 0, view: 'intro' })
+    const el = document.getElementById('section-intro')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+    }
+  },
 
   next: () => {
-    const { view } = get()
-    if (view === 'hub') return
-    const idx = TOPIC_ORDER.indexOf(view as TopicId)
-    if (idx < TOPIC_ORDER.length - 1) set({ view: TOPIC_ORDER[idx + 1] })
+    const { activeSection } = get()
+    if (activeSection < TOPIC_ORDER.length - 1) {
+      const nextIdx = activeSection + 1
+      get().setActiveSection(nextIdx)
+      const el = document.getElementById(`section-${TOPIC_ORDER[nextIdx]}`)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    }
   },
 
   prev: () => {
-    const { view } = get()
-    if (view === 'hub') return
-    const idx = TOPIC_ORDER.indexOf(view as TopicId)
-    if (idx > 0) set({ view: TOPIC_ORDER[idx - 1] })
+    const { activeSection } = get()
+    if (activeSection > 0) {
+      const prevIdx = activeSection - 1
+      get().setActiveSection(prevIdx)
+      const el = document.getElementById(`section-${TOPIC_ORDER[prevIdx]}`)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    }
   },
 }))
-
-export { TOPIC_ORDER }

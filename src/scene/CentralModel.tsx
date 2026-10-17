@@ -10,10 +10,11 @@ const TARGET_HEIGHT = 2.0
 function ModelMesh() {
   const { scene } = useGLTF(MODEL_PATH)
   const groupRef = useRef<THREE.Group>(null)
-  const view = useStory((s) => s.view)
+  const activeSection = useStory((s) => s.activeSection)
   const scaledRef = useRef(false)
+  const targetFactor = useRef(1)
 
-  // Auto-scale once after mount (safe: useEffect runs after DOM is ready)
+  // Auto-scale once after mount
   useEffect(() => {
     if (scaledRef.current || !groupRef.current) return
     const box = new THREE.Box3().setFromObject(groupRef.current)
@@ -21,8 +22,8 @@ function ModelMesh() {
     box.getSize(size)
     if (size.y > 0) {
       const factor = TARGET_HEIGHT / size.y
+      targetFactor.current = factor
       groupRef.current.scale.setScalar(factor)
-      // Re-compute after scaling to find new center
       const scaledBox = new THREE.Box3().setFromObject(groupRef.current)
       const center = new THREE.Vector3()
       scaledBox.getCenter(center)
@@ -31,11 +32,18 @@ function ModelMesh() {
     }
   }, [])
 
+  // Rotate constantly and smoothly scale down in the conclusion section
   useFrame((_, delta) => {
     if (!groupRef.current) return
-    if (view === 'hub') {
-      groupRef.current.rotation.y += delta * 0.4
-    }
+    // Constant rotation as requested
+    groupRef.current.rotation.y += delta * 0.45
+
+    // Smooth visibility transition: hide in conclusion (section 5) where HouseModel takes over
+    const isConclusion = activeSection === 5
+    const targetScale = isConclusion ? 0.0001 : targetFactor.current
+    const currentScale = groupRef.current.scale.x
+    const newScale = THREE.MathUtils.lerp(currentScale, targetScale, 0.1)
+    groupRef.current.scale.setScalar(newScale)
   })
 
   return (
@@ -47,9 +55,16 @@ function ModelMesh() {
 
 function FallbackSphere() {
   const ref = useRef<THREE.Mesh>(null)
+  const activeSection = useStory((s) => s.activeSection)
+
   useFrame((_, delta) => {
-    if (ref.current) ref.current.rotation.y += delta * 0.4
+    if (!ref.current) return
+    ref.current.rotation.y += delta * 0.45
+    const isConclusion = activeSection === 5
+    const targetScale = isConclusion ? 0.0001 : 1.0
+    ref.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1)
   })
+
   return (
     <mesh ref={ref} position={[0, 0, 0]}>
       <icosahedronGeometry args={[1, 3]} />
@@ -65,8 +80,13 @@ function FallbackSphere() {
   )
 }
 
-interface ModelEBState { hasError: boolean }
-class ModelErrorBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, ModelEBState> {
+interface ModelEBState {
+  hasError: boolean
+}
+class ModelErrorBoundary extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  ModelEBState
+> {
   state: ModelEBState = { hasError: false }
   static getDerivedStateFromError() {
     return { hasError: true }

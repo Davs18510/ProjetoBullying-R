@@ -8,12 +8,23 @@
 3. **`Suspense` no Canvas**: `SceneContent` envolvido em `<Suspense fallback={null}>` dentro do Canvas e modelo protegido com `ModelErrorBoundary`.
 4. **Build limpo**: remoção de imports não utilizados (`noUnusedLocals`); `npm run build` passa com 0 erros.
 
-### Alterações de Design e R Interativo (solicitadas pelo usuário)
-1. **Remoção de textos descritivos**: `TopicPanel.tsx` e `MobileTopicPanel` tiveram todos os parágrafos de texto removidos, dedicando o painel integralmente ao **IDE interativo em R** (editor de código com scripts pré-carregados, área de dispositivo gráfico Canvas 800x500 e atalhos).
-2. **Órbita estática com flutuação orgânica**: Em `OrbitTabs.tsx`, as abas pararam de girar em torno do centro e foram posicionadas em um arco frontal panorâmico, flutuando suavemente de forma independente no eixo Y e com leve inclinação.
-3. **Estilo pmndrs `cards-with-border-radius`**: Cards verticais com `RoundedBox` suave (raio 0.16), contorno externo dourado com brilho especular, corpo interno de vidro fosco, pílula de número, tipografia limpa e elevação em hover com cursor pointer.
-4. **Iluminação dourada e cores quentes (fim de tarde nostálgico)**: Paleta de sunset no `theme.css` e em `Scene.tsx` (sol direcional `#ffc87a`, luz hemisférica céu âmbar / chão ameixa, névoa suave no horizonte, anéis de latão e cobre na ilha, bolhas iridescentes em tom dourado).
-5. **Estruturas escolares no fundo**: Criado `src/scene/SchoolBackground.tsx` com pavilhão central, torre do relógio iluminada, janelas brilhantes com luz acolhedora de sala de aula e árvores em tons de outono.
+### Dinâmica de Scrollytelling e Iluminação Frutiger Aero (implementadas)
+1. **Restauração da Iluminação Daylight**: Retorno à luz limpa e cristalina de céu azul (`#6ec6ff` → `#eaf8ff`), sol suave, bolhas em tom ciano translúcido e ilha verde vibrante.
+2. **Dinâmica de Scrollytelling com Zoom**:
+   - Remoção dos cards 3D orbitais e de `OrbitControls` (sem arraste manual da câmera).
+   - O scroll da página move a narrativa: cada seção dispara uma interpolação suave de zoom (`CameraRig` com interpolação `lerp` de posição e FOV/alvo).
+   - Menu lateral de dots e atalhos de teclado (setas/PageUp/PageDown) para salto rápido entre tópicos.
+3. **Seção de Introdução**: Resumo em tópicos dos desafios, objetivos e base PeNSE 2024 extraídos do documento original.
+4. **Tópicos 02 a 05**:
+   - Centro: Modelo 3D (`frutiger_aero_character_v2.glb`) girando constantemente em 3D nativo.
+   - Esquerda: Resumo objetivo do tópico (sem nomes de apresentadores).
+   - Direita: IDE Interativo em R com editor de código, status WebR e viewport para gráficos.
+5. **Conclusão (Tópico 06)**:
+   - Centro: Modelo 3D estilizado de Casa (`HouseModel.tsx`), simbolizando o acolhimento seguro da escola como segunda família.
+   - Conteúdo: Somente o resumo das soluções práticas (sem IDE R).
+6. **Cenário e Escola Suaves**:
+   - Chão repleto por grama ampla e uniforme (`Island.tsx`).
+   - Escola ao fundo em estética moderna, limpa e minimalista (`SchoolBackground.tsx`), com janelas em vidro suave e árvores esféricas.
 
 ### Erros de digitação detectados no documento original (para decisão do usuário)
 1. Tópico 02, §2: "segundo **gráficos**" (deveria ser "segundo **gráfico**")

@@ -37,14 +37,14 @@ export function Bubbles() {
           <mesh position={b.position} scale={b.scale}>
             <sphereGeometry args={[1, 24, 24]} />
             <meshPhysicalMaterial
-              color="#ffe5c4"
-              transmission={0.78}
-              thickness={0.8}
-              roughness={0.04}
-              metalness={0.2}
-              envMapIntensity={2.0}
+              color="#a8eeff"
+              transmission={0.85}
+              thickness={0.5}
+              roughness={0.03}
+              metalness={0.1}
+              envMapIntensity={1.8}
               transparent
-              opacity={0.65}
+              opacity={0.6}
             />
           </mesh>
         </Float>
