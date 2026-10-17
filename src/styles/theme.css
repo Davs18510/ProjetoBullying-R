@@ -3,16 +3,19 @@
 @import '@fontsource/nunito-sans/700.css';
 
 :root {
-  --sky-top: #6ec6ff;
-  --sky-bottom: #eaf8ff;
-  --aqua: #19c6d6;
-  --aqua-deep: #0a8fb0;
-  --grass: #7ed957;
-  --grass-deep: #3fae3a;
-  --glass-bg: rgba(255, 255, 255, 0.35);
-  --glass-border: rgba(255, 255, 255, 0.7);
-  --text: #0b3a52;
-  --text-soft: #3d6a82;
+  --sky-top: #4a5c82;
+  --sky-middle: #d67b5e;
+  --sky-bottom: #fed8a8;
+  --golden: #ffbe59;
+  --golden-deep: #d97724;
+  --aqua: #22d3ee;
+  --aqua-deep: #0891b2;
+  --grass: #689f38;
+  --grass-deep: #33691e;
+  --glass-bg: rgba(255, 248, 240, 0.42);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --text: #1a2536;
+  --text-soft: #4a5568;
   --radius: 24px;
   font-family: 'Nunito Sans', system-ui, sans-serif;
 }
@@ -30,19 +33,19 @@ html, body, #root {
 }
 
 body {
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-middle) 42%, var(--sky-bottom) 100%);
   color: var(--text);
   font-family: 'Nunito Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Glass utility */
+/* Glass utility with warm sunset reflection */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(145%);
+  -webkit-backdrop-filter: blur(20px) saturate(145%);
   border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 20px 50px rgba(10,143,176,0.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 20px 50px rgba(180, 83, 9, 0.15);
   position: relative;
   overflow: hidden;
 }
@@ -52,36 +55,37 @@ body {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 40%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Aqua gel button */
-.btn-aqua {
+/* Gel buttons with warm golden & aqua glow */
+.btn-aqua, .btn-golden {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 10px 22px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #38e0ee 0%, var(--aqua-deep) 100%);
+  background: linear-gradient(180deg, #ffc46b 0%, var(--golden-deep) 100%);
   color: #fff;
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   border: none;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 4px 14px rgba(25,198,214,0.4);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 4px 16px rgba(217,119,36,0.38);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
-.btn-aqua:hover {
+.btn-aqua:hover, .btn-golden:hover {
   transform: translateY(-2px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 8px 20px rgba(25,198,214,0.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 8px 24px rgba(217,119,36,0.5);
 }
 
-.btn-aqua:active {
+.btn-aqua:active, .btn-golden:active {
   transform: translateY(0);
 }
 

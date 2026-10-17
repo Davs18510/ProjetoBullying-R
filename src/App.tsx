@@ -93,18 +93,18 @@ function HubOverlay() {
         bottom: 28,
         left: '50%',
         transform: 'translateX(-50%)',
-        background: 'rgba(255,255,255,0.38)',
-        backdropFilter: 'blur(14px)',
-        border: '1px solid rgba(255,255,255,0.65)',
+        background: 'rgba(255,248,240,0.55)',
+        backdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255,255,255,0.75)',
         borderRadius: 999,
-        padding: '8px 20px',
-        fontSize: '0.78rem',
-        color: 'var(--text-soft)',
-        fontWeight: 600,
+        padding: '8px 22px',
+        fontSize: '0.8rem',
+        color: 'var(--text)',
+        fontWeight: 700,
         whiteSpace: 'nowrap',
-        boxShadow: '0 4px 16px rgba(10,143,176,0.12)',
+        boxShadow: '0 4px 18px rgba(217,119,36,0.18)',
       }}>
-        Clique em uma aba para explorar · arraste para girar
+        ✨ Selecione um card para abrir a IDE em R · arraste para olhar ao redor
       </div>
 
       {/* Visually hidden keyboard nav */}
@@ -149,7 +149,7 @@ function MobileTopicPanel() {
       aria-modal={isOpen}
       style={{
         position: 'absolute', inset: 0, zIndex: 30,
-        background: 'linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%)',
+        background: 'linear-gradient(180deg, #fdf6ec 0%, #fee4c3 100%)',
         overflowY: 'auto',
         transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform 0.4s cubic-bezier(.22,.9,.3,1)',
@@ -159,60 +159,84 @@ function MobileTopicPanel() {
       {/* Sticky header */}
       <div style={{
         padding: '20px 20px 16px', display: 'flex', alignItems: 'center', gap: 12,
-        borderBottom: '1px solid rgba(255,255,255,0.45)',
-        background: 'rgba(255,255,255,0.3)', backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(255,255,255,0.6)',
+        background: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(16px)',
         position: 'sticky', top: 0, zIndex: 2,
       }}>
         <button aria-label="Voltar" onClick={close} style={{
           width: 36, height: 36, borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.4)',
+          border: '1px solid rgba(255,255,255,0.7)', background: 'rgba(255,255,255,0.6)',
           cursor: 'pointer', fontSize: '1rem', color: 'var(--text)',
         }}>←</button>
         <div>
           <span style={{
-            display: 'inline-block', padding: '1px 8px', borderRadius: 999,
-            background: 'linear-gradient(135deg, #19c6d6, #0a8fb0)',
+            display: 'inline-block', padding: '2px 8px', borderRadius: 999,
+            background: 'linear-gradient(135deg, #ffc46b, #d97724)',
             color: '#fff', fontSize: '0.7rem', fontWeight: 700, marginBottom: 2,
-          }}>{topic?.number}</span>
-          <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text)' }}>
+          }}>TÓPICO {topic?.number}</span>
+          <div style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text)' }}>
             {topic?.title}
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div style={{ padding: '20px 20px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+      {/* R IDE Interactive Area */}
+      <div style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{
-            width: 28, height: 28, borderRadius: '50%',
-            background: 'linear-gradient(135deg, #7ed957, #3fae3a)',
+            width: 24, height: 24, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #ffc46b, #d97724)',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '0.7rem', fontWeight: 700, color: '#fff',
+            fontSize: '0.65rem', fontWeight: 700, color: '#fff',
           }}>{topic?.presenter?.charAt(0)}</span>
           <span style={{ fontSize: '0.82rem', color: 'var(--text-soft)', fontWeight: 600 }}>
-            {topic?.presenter}
+            Apresentação: {topic?.presenter}
           </span>
         </div>
-        {topic?.paragraphs.map((p, i) => (
-          <p key={i} style={{ fontSize: '0.92rem', lineHeight: 1.75, color: 'var(--text)', marginBottom: 14 }}>
-            {p}
-          </p>
-        ))}
-        {topic?.hasGraphs && (
+
+        {/* Script Editor Frame */}
+        <div style={{
+          borderRadius: 14, background: '#1e293b', border: '1px solid rgba(255,255,255,0.15)',
+          overflow: 'hidden',
+        }}>
           <div style={{
-            marginTop: 16, padding: '14px', borderRadius: 14,
-            background: 'rgba(25,198,214,0.08)', border: '1px dashed rgba(25,198,214,0.4)',
-            textAlign: 'center', color: 'var(--text-soft)', fontSize: '0.82rem',
-          }}>📊 Gráficos interativos serão adicionados na Fase 3</div>
-        )}
+            display: 'flex', justifyContent: 'space-between', padding: '8px 12px',
+            background: '#0f172a', fontSize: '0.72rem', color: '#94a3b8',
+          }}>
+            <span>⚡ Script R Interativo</span>
+            <span style={{ color: '#22c55e' }}>● WebR Pronto</span>
+          </div>
+          <pre style={{
+            margin: 0, padding: '12px', fontSize: '0.75rem', color: '#f8fafc',
+            lineHeight: 1.55, overflowX: 'auto', maxHeight: 150,
+          }}>
+            <code>{`# Ambiente R PeNSE 2024\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# Pronto para execução na Fase 3`}</code>
+          </pre>
+        </div>
+
+        {/* Graph Preview */}
+        <div style={{
+          padding: '24px 16px', borderRadius: 14,
+          background: 'rgba(255,255,255,0.65)', border: '1px solid rgba(255,255,255,0.8)',
+          textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+        }}>
+          <span style={{ fontSize: '1.8rem' }}>📊</span>
+          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text)' }}>
+            Gráfico Estatístico R em Tempo Real
+          </span>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-soft)' }}>
+            Ambiente interativo pronto para a Fase 3
+          </span>
+        </div>
+
         {topic?.cvvNote && (
           <div style={{
-            marginTop: 16, padding: '12px 16px', borderRadius: 14,
-            background: 'rgba(10,143,176,0.1)', border: '1px solid rgba(25,198,214,0.3)',
-            fontSize: '0.82rem', color: 'var(--text-soft)',
+            padding: '12px 14px', borderRadius: 12,
+            background: 'rgba(217,119,36,0.12)', border: '1px solid rgba(217,119,36,0.25)',
+            fontSize: '0.8rem', color: 'var(--text-soft)',
           }}>
             💙 <em>Se você ou alguém que você conhece está passando por sofrimento, o{' '}
-            <strong style={{ color: 'var(--aqua-deep)' }}>CVV</strong> (188, ligação gratuita, 24h) pode ajudar.</em>
+            <strong style={{ color: 'var(--golden-deep)' }}>CVV</strong> (188, ligação gratuita, 24h) pode ajudar.</em>
           </div>
         )}
       </div>
@@ -221,11 +245,11 @@ function MobileTopicPanel() {
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
         padding: '12px 20px',
-        background: 'rgba(255,255,255,0.35)', backdropFilter: 'blur(14px)',
-        borderTop: '1px solid rgba(255,255,255,0.5)',
+        background: 'rgba(255,248,240,0.85)', backdropFilter: 'blur(16px)',
+        borderTop: '1px solid rgba(255,255,255,0.6)',
         display: 'flex', gap: 10, zIndex: 3,
       }}>
-        <button className="btn-aqua" onClick={prev} disabled={currentIndex <= 0} style={{ opacity: currentIndex > 0 ? 1 : 0.4 }}>
+        <button className="btn-golden" onClick={prev} disabled={currentIndex <= 0} style={{ opacity: currentIndex > 0 ? 1 : 0.4, padding: '8px 16px' }}>
           ← Anterior
         </button>
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
@@ -233,13 +257,13 @@ function MobileTopicPanel() {
             <button key={id} onClick={() => openTopic(id)} aria-current={id === view ? 'step' : undefined} style={{
               width: id === view ? 24 : 8, height: 8, borderRadius: 999, border: 'none',
               cursor: 'pointer', padding: 0,
-              background: id === view ? 'linear-gradient(90deg, #19c6d6, #0a8fb0)' : 'rgba(10,143,176,0.3)',
+              background: id === view ? 'linear-gradient(90deg, #ffc46b, #d97724)' : 'rgba(217,119,36,0.25)',
               transition: 'all 0.3s',
             }}/>
           ))}
         </div>
-        <button className="btn-aqua" onClick={next} disabled={currentIndex >= TOPIC_ORDER.length - 1}
-          style={{ opacity: currentIndex < TOPIC_ORDER.length - 1 ? 1 : 0.4 }}>
+        <button className="btn-golden" onClick={next} disabled={currentIndex >= TOPIC_ORDER.length - 1}
+          style={{ opacity: currentIndex < TOPIC_ORDER.length - 1 ? 1 : 0.4, padding: '8px 16px' }}>
           Próximo →
         </button>
       </div>

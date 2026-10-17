@@ -34,9 +34,9 @@ export function StoryNav({ currentId }: StoryNavProps) {
               cursor: 'pointer',
               padding: 0,
               background: isActive
-                ? 'linear-gradient(90deg, #19c6d6, #0a8fb0)'
-                : 'rgba(10,143,176,0.3)',
-              boxShadow: isActive ? '0 0 8px rgba(25,198,214,0.6)' : 'none',
+                ? 'linear-gradient(90deg, #ffc46b, #d97724)'
+                : 'rgba(217,119,36,0.25)',
+              boxShadow: isActive ? '0 0 10px rgba(255,190,89,0.7)' : 'none',
               transition: 'all 0.3s ease',
               flexShrink: 0,
             }}

@@ -8,11 +8,12 @@
 3. **`Suspense` no Canvas**: `SceneContent` envolvido em `<Suspense fallback={null}>` dentro do Canvas e modelo protegido com `ModelErrorBoundary`.
 4. **Build limpo**: remoção de imports não utilizados (`noUnusedLocals`); `npm run build` passa com 0 erros.
 
-### Arquivos criados na Fase 2
-- `src/content/topics.ts` — 6 tópicos, texto fiel ao docx (nota: "segundo gráficos" e "extrema prioridade  e urgência" preservados do original)
-- `src/ui/TopicPanel.tsx` — painel vidro com slide-in CSS, badge apresentador, StoryNav, CVV note, Esc/setas
-- `src/ui/StoryNav.tsx` — dots de progresso (pílula aqua no ativo)
-- `src/ui/MobileMenu.tsx` — menu 2D cards glass para mobile/sem WebGL
+### Alterações de Design e R Interativo (solicitadas pelo usuário)
+1. **Remoção de textos descritivos**: `TopicPanel.tsx` e `MobileTopicPanel` tiveram todos os parágrafos de texto removidos, dedicando o painel integralmente ao **IDE interativo em R** (editor de código com scripts pré-carregados, área de dispositivo gráfico Canvas 800x500 e atalhos).
+2. **Órbita estática com flutuação orgânica**: Em `OrbitTabs.tsx`, as abas pararam de girar em torno do centro e foram posicionadas em um arco frontal panorâmico, flutuando suavemente de forma independente no eixo Y e com leve inclinação.
+3. **Estilo pmndrs `cards-with-border-radius`**: Cards verticais com `RoundedBox` suave (raio 0.16), contorno externo dourado com brilho especular, corpo interno de vidro fosco, pílula de número, tipografia limpa e elevação em hover com cursor pointer.
+4. **Iluminação dourada e cores quentes (fim de tarde nostálgico)**: Paleta de sunset no `theme.css` e em `Scene.tsx` (sol direcional `#ffc87a`, luz hemisférica céu âmbar / chão ameixa, névoa suave no horizonte, anéis de latão e cobre na ilha, bolhas iridescentes em tom dourado).
+5. **Estruturas escolares no fundo**: Criado `src/scene/SchoolBackground.tsx` com pavilhão central, torre do relógio iluminada, janelas brilhantes com luz acolhedora de sala de aula e árvores em tons de outono.
 
 ### Erros de digitação detectados no documento original (para decisão do usuário)
 1. Tópico 02, §2: "segundo **gráficos**" (deveria ser "segundo **gráfico**")

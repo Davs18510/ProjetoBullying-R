@@ -57,12 +57,12 @@ export function MobileMenu() {
           onMouseEnter={(e) => {
             ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-3px)'
             ;(e.currentTarget as HTMLButtonElement).style.boxShadow =
-              '0 10px 30px rgba(25,198,214,0.25)'
+              '0 10px 30px rgba(217,119,36,0.25)'
           }}
           onMouseLeave={(e) => {
             ;(e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
             ;(e.currentTarget as HTMLButtonElement).style.boxShadow =
-              '0 4px 20px rgba(10,143,176,0.12)'
+              '0 4px 20px rgba(217,119,36,0.12)'
           }}
         >
           <span
@@ -70,7 +70,7 @@ export function MobileMenu() {
               width: 40,
               height: 40,
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #19c6d6, #0a8fb0)',
+              background: 'linear-gradient(135deg, #ffc46b, #d97724)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -78,7 +78,7 @@ export function MobileMenu() {
               fontWeight: 700,
               color: '#fff',
               flexShrink: 0,
-              boxShadow: '0 2px 8px rgba(25,198,214,0.4)',
+              boxShadow: '0 2px 8px rgba(217,119,36,0.35)',
             }}
           >
             {topic.number}
@@ -102,10 +102,10 @@ export function MobileMenu() {
                 fontWeight: 600,
               }}
             >
-              {topic.presenter} {topic.hasGraphs ? '· 📊 Gráficos' : ''}
+              {topic.presenter} · ⚡ IDE R
             </div>
           </div>
-          <span style={{ color: 'var(--aqua)', fontSize: '1.1rem' }}>›</span>
+          <span style={{ color: 'var(--golden-deep)', fontSize: '1.2rem', fontWeight: 700 }}>›</span>
         </button>
       ))}
     </div>
