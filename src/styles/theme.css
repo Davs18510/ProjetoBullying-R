@@ -3,8 +3,19 @@
 @import '@fontsource/nunito-sans/700.css';
 
 :root {
-  --sky-top: #6ec6ff;
-  --sky-bottom: #eaf8ff;
+  --sky-top: #6f86c4;
+  --sky-upper: #9aa6d9;
+  --sky-mid: #d7b0cf;
+  --sky-lower: #f6cfa6;
+  --sky-bottom: #fdf3da;
+  --sky-gradient: linear-gradient(
+    180deg,
+    var(--sky-top) 0%,
+    var(--sky-upper) 26%,
+    var(--sky-mid) 52%,
+    var(--sky-lower) 76%,
+    var(--sky-bottom) 100%
+  );
   --aqua: #19c6d6;
   --aqua-deep: #0a8fb0;
   --grass: #7ed957;
@@ -30,10 +41,27 @@ html, body, #root {
 }
 
 body {
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  background: var(--sky-gradient);
   color: var(--text);
   font-family: 'Nunito Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Nostalgic golden-hour sky: soft periwinkle fading into warm pink and peach
+   around a low afternoon sun, very comforting and school-memory-like. */
+.sky-bg {
+  background:
+    radial-gradient(58% 42% at 72% 40%, rgba(255, 214, 160, 0.8) 0%, rgba(255, 214, 160, 0) 62%),
+    radial-gradient(120% 58% at 78% 6%, rgba(255, 236, 214, 0.5) 0%, rgba(255, 236, 214, 0) 55%),
+    radial-gradient(90% 45% at 12% 10%, rgba(198, 208, 244, 0.55) 0%, rgba(198, 208, 244, 0) 60%),
+    linear-gradient(
+      180deg,
+      var(--sky-top) 0%,
+      var(--sky-upper) 26%,
+      var(--sky-mid) 52%,
+      var(--sky-lower) 76%,
+      var(--sky-bottom) 100%
+    );
 }
 
 /* Glass utility - Fresh Frutiger Aero crystal glass */

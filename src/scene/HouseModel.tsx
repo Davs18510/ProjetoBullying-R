@@ -3,19 +3,48 @@ import { useFrame } from '@react-three/fiber'
 import { RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 
-export function HouseModel() {
-  const groupRef = useRef<THREE.Group>(null)
+interface HouseModelProps {
+  active: boolean
+}
 
-  // Gentle floating and subtle slow rotation for the conclusion centerpiece
-  useFrame(({ clock }) => {
-    if (!groupRef.current) return
+export function HouseModel({ active }: HouseModelProps) {
+  const groupRef = useRef<THREE.Group>(null)
+  const revealRef = useRef(0)
+  const baseScale = 0.85
+
+  // Fade + grow in when the conclusion section becomes active, and gently float.
+  useFrame(({ clock }, delta) => {
+    const group = groupRef.current
+    if (!group) return
+
     const t = clock.getElapsedTime()
-    groupRef.current.rotation.y = Math.sin(t * 0.4) * 0.25 + 0.1
-    groupRef.current.position.y = -0.3 + Math.sin(t * 1.2) * 0.05
+    revealRef.current = THREE.MathUtils.lerp(
+      revealRef.current,
+      active ? 1 : 0,
+      Math.min(delta * 2.4, 1)
+    )
+    const reveal = revealRef.current
+    const eased = reveal * reveal * (3 - 2 * reveal)
+
+    group.rotation.y = Math.sin(t * 0.4) * 0.25 + 0.1
+    group.position.y = -0.3 + (1 - eased) * 0.5 + Math.sin(t * 1.2) * 0.05
+    group.scale.setScalar(baseScale * eased)
+    group.visible = reveal > 0.01
+
+    group.traverse((obj) => {
+      const mesh = obj as THREE.Mesh
+      const material = mesh.material as THREE.Material | THREE.Material[] | undefined
+      if (!material) return
+      const list = Array.isArray(material) ? material : [material]
+      list.forEach((m) => {
+        m.transparent = true
+        m.opacity = eased
+      })
+    })
   })
 
   return (
-    <group ref={groupRef} position={[0, -0.3, 0]} scale={1.2}>
+    <group ref={groupRef} position={[1.15, -0.3, 0]} scale={baseScale}>
       {/* ── Foundation / Porch Base ── */}
       <mesh position={[0, -0.05, 0]} receiveShadow>
         <cylinderGeometry args={[1.6, 1.7, 0.15, 32]} />
@@ -108,10 +137,9 @@ export function HouseModel() {
 
       {/* ── Chimney with Floating Puff Bubbles ── */}
       <group position={[0.55, 1.85, -0.3]}>
-        <mesh>
-          <boxGeometry args={[0.26, 0.65, 0.26]} />
+        <RoundedBox args={[0.26, 0.65, 0.26]} radius={0.08} smoothness={4}>
           <meshStandardMaterial color="#f87171" roughness={0.5} />
-        </mesh>
+        </RoundedBox>
         {/* Smoke puff 1 */}
         <mesh position={[0, 0.45, 0]}>
           <sphereGeometry args={[0.08, 16, 16]} />

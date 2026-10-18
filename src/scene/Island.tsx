@@ -7,7 +7,7 @@ export function Island() {
       <mesh receiveShadow position={[0, -0.25, 0]}>
         <cylinderGeometry args={[11, 12, 0.5, 64]} />
         <meshStandardMaterial
-          color="#52b728"
+          color="#5fbe32"
           roughness={0.7}
           metalness={0.05}
         />
@@ -17,7 +17,7 @@ export function Island() {
       <mesh receiveShadow position={[0, -0.04, 0]}>
         <cylinderGeometry args={[3.2, 3.6, 0.18, 48]} />
         <meshStandardMaterial
-          color="#5fc930"
+          color="#6fce3c"
           roughness={0.65}
           metalness={0.04}
         />

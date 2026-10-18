@@ -1,5 +1,6 @@
-import { Suspense } from 'react'
+import { Suspense, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Environment, Lightformer } from '@react-three/drei'
 import * as THREE from 'three'
 import { useStory } from '../state/useStory'
 import { CentralModel } from './CentralModel'
@@ -7,6 +8,7 @@ import { HouseModel } from './HouseModel'
 import { Bubbles } from './Bubbles'
 import { Island } from './Island'
 import { SchoolBackground } from './SchoolBackground'
+import { SectionProps } from './SectionProps'
 
 // Dynamic camera poses per section for smooth storytelling zooms
 const SECTION_CAMERA_POSES: { pos: THREE.Vector3; target: THREE.Vector3 }[] = [
@@ -47,16 +49,18 @@ const LERP_SPEED = 2.6
 function CameraRig() {
   const { camera } = useThree()
   const activeSection = useStory((s) => s.activeSection)
+  // Persistent look-at target. Keeping it in a ref (instead of deriving it from
+  // the camera direction every frame) avoids the feedback loop that made the
+  // camera swing toward the sky/ground on first paint.
+  const targetRef = useRef(
+    new THREE.Vector3().copy(SECTION_CAMERA_POSES[0].target)
+  )
 
   useFrame((_, delta) => {
     const pose = SECTION_CAMERA_POSES[activeSection] || SECTION_CAMERA_POSES[0]
-    camera.position.lerp(pose.pos, delta * LERP_SPEED)
-
-    const currentTarget = new THREE.Vector3()
-    camera.getWorldDirection(currentTarget)
-    currentTarget.multiplyScalar(10).add(camera.position)
-    currentTarget.lerp(pose.target, delta * LERP_SPEED)
-    camera.lookAt(currentTarget)
+    camera.position.lerp(pose.pos, Math.min(delta * LERP_SPEED, 1))
+    targetRef.current.lerp(pose.target, Math.min(delta * LERP_SPEED, 1))
+    camera.lookAt(targetRef.current)
   })
 
   return null
@@ -70,20 +74,31 @@ function SceneContent() {
     <>
       <CameraRig />
 
-      {/* Soft atmospheric daylight sky fog */}
-      <fog attach="fog" args={['#eaf8ff', 12, 30]} />
+      {/* Soft, warm atmospheric haze: only the distant background (school,
+          trees, horizon) gets veiled, so small imperfections fade away while
+          the centre models stay crisp. */}
+      <fog attach="fog" args={['#f7dcc0', 8, 22]} />
 
-      {/* Fresh Daylight Frutiger Aero Lighting */}
-      <ambientLight intensity={0.65} color="#d4f0ff" />
-      <hemisphereLight args={['#a8e4ff', '#7ed957', 0.75]} />
+      {/* Golden-hour comfort lighting: warm low sun + soft violet sky bounce */}
+      <ambientLight intensity={0.6} color="#ffe6cf" />
+      <hemisphereLight args={['#ffcfa8', '#8fc85a', 0.8]} />
       <directionalLight
-        position={[5, 8, 4]}
-        intensity={1.35}
-        color="#ffffff"
+        position={[6, 4.5, 5]}
+        intensity={1.7}
+        color="#ffd9a0"
         castShadow={false}
       />
-      <directionalLight position={[-4, 3, -4]} intensity={0.35} color="#a8eeff" />
-      <pointLight position={[0, 3, 2]} intensity={0.4} color="#ffffff" distance={10} />
+      <directionalLight position={[-5, 4, -3]} intensity={0.35} color="#c9c4f0" />
+      <pointLight position={[0, 3, 2]} intensity={0.45} color="#fff1dc" distance={11} />
+
+      {/* Procedural environment (no HDR download) so soap bubbles reflect the
+          warm afternoon sky and a soft sun like real soap films. */}
+      <Environment resolution={128} frames={1}>
+        <color attach="background" args={['#fbe6cf']} />
+        <Lightformer intensity={2.2} color="#ffd9a8" position={[5, 3, 4]} scale={[8, 6, 1]} />
+        <Lightformer intensity={1.4} color="#ffffff" position={[0, 7, -6]} scale={[12, 5, 1]} />
+        <Lightformer intensity={1.1} color="#d9cdf0" position={[-6, 3, -2]} scale={[7, 6, 1]} />
+      </Environment>
 
       {/* Clean modern school in the background */}
       <SchoolBackground />
@@ -93,7 +108,10 @@ function SceneContent() {
 
       {/* Central 3D Models: Character during topics 0-4, House model on conclusion (5) */}
       <CentralModel />
-      {isConclusion && <HouseModel />}
+      <HouseModel active={isConclusion} />
+
+      {/* Themed rounded 3D emblem floating over each topic's message */}
+      <SectionProps />
 
       {/* Floating crystalline bubbles */}
       <Bubbles />

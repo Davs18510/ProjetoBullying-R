@@ -30,7 +30,7 @@ export const TOPICS: TopicContent[] = [
     hasGraphs: true,
     paragraphs: [
       'Primeiramente, devemos identificar o perfil majoritário das vítimas do bullying e onde geralmente é mais comum encontramos a ocorrência delas. Isso é essencial para que as soluções de apoio às vítimas sejam aplicadas com maior urgência sobre cenários com maior probabilidade em que o bullying ocorra, sem contar que antes de elaborarmos a solução deve-se entender o panorama por trás do bullying.',
-      'Percebemos no primeiro gráfico que a faixa de idade em que grande parte das vítimas se encaixam está entre 13 e 15 anos, onde no segundo gráficos compreendemos que a distribuição do bullying entre homens e mulheres é semelhante, porém, o bullying presencial é mais notável no perfil feminino. Com essas duas informações podemos já ter uma melhor visão sobre qual perfil representa a maior parte das vítimas do bullying.',
+      'Percebemos no primeiro gráfico que a faixa de idade em que grande parte das vítimas se encaixam está entre 13 e 15 anos, onde no segundo gráfico compreendemos que a distribuição do bullying entre homens e mulheres é semelhante, porém, o bullying presencial é mais notável no perfil feminino. Com essas duas informações podemos já ter uma melhor visão sobre qual perfil representa a maior parte das vítimas do bullying.',
       'Agora, olhando para a localidade do bullying, é perceptível que o bullying se distribui de uma maneira homogênea, tendo algumas diferenças quanto a prática do bullying em ambiente virtual e presencial. Com isso, podemos perceber que o bullying não se concentra somente em escolas públicas ou fora da capital como muitos pensam, porém, é um crime que se alastra por todos os tipos de escolas no país.',
       'Portanto, podemos entender melhor quem geralmente é a vítima do bullying e entender que todas as escolas precisam tomar uma ação, visto que não há em si uma concentração do bullying em algum tipo específico de localidade ou escola.',
     ],
@@ -71,7 +71,7 @@ export const TOPICS: TopicContent[] = [
     paragraphs: [
       'Por fim, devemos compreender os impactos e consequências do bullying, para que possamos ter uma base sólida e objetiva de como este crime não impacta somente no contexto social da vítima, porém, pode causar danos duradouros na sua psique.',
       'O gráfico nos mostra claramente sobre como a ocorrência do bullying aumenta os casos de sintomas de certos tipos de doenças mentais. Nisso, podemos entender que o bullying de fato é um problema que pode aumentar cada vez mais casos de depressão ou ansiedade, o que podem acarretar consequências mais sérias como a automutilação ou até o suicídio.',
-      'Assim, somos norteados com o fato de que o bullying pode gerar danos irreversíveis a vítima, demandando que este problema seja resolvido com extrema prioridade  e urgência.',
+      'Assim, somos norteados com o fato de que o bullying pode gerar danos irreversíveis a vítima, demandando que este problema seja resolvido com extrema prioridade e urgência.',
     ],
   },
   {

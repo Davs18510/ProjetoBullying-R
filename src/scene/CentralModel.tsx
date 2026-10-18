@@ -38,9 +38,11 @@ function ModelMesh() {
     // Constant rotation as requested
     groupRef.current.rotation.y += delta * 0.45
 
-    // Smooth visibility transition: hide in conclusion (section 5) where HouseModel takes over
-    const isConclusion = activeSection === 5
-    const targetScale = isConclusion ? 0.0001 : targetFactor.current
+    // Smooth crossfade: the character stays in the intro (section 0) and in
+    // the mapping topic (section 1). From topic 03 onward a themed emblem
+    // takes over the center stage.
+    const keepCharacter = activeSection <= 1
+    const targetScale = keepCharacter ? targetFactor.current : 0.0001
     const currentScale = groupRef.current.scale.x
     const newScale = THREE.MathUtils.lerp(currentScale, targetScale, 0.1)
     groupRef.current.scale.setScalar(newScale)
@@ -60,8 +62,8 @@ function FallbackSphere() {
   useFrame((_, delta) => {
     if (!ref.current) return
     ref.current.rotation.y += delta * 0.45
-    const isConclusion = activeSection === 5
-    const targetScale = isConclusion ? 0.0001 : 1.0
+    const keepCharacter = activeSection <= 1
+    const targetScale = keepCharacter ? 1.0 : 0.0001
     ref.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1)
   })
 

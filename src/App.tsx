@@ -43,7 +43,7 @@ class SceneErrorBoundary extends Component<{ children: ReactNode }, EBState> {
             justifyContent: 'center',
             gap: 12,
             padding: 32,
-            background: 'linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%)',
+            background: 'var(--sky-gradient)',
             zIndex: 1,
           }}
         >
@@ -169,11 +169,11 @@ function TopHeader() {
 export default function App() {
   return (
     <div
+      className="sky-bg"
       style={{
         position: 'relative',
         width: '100%',
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%)',
       }}
     >
       {/* 3D Scene in fixed background with smooth dynamic section zoom */}

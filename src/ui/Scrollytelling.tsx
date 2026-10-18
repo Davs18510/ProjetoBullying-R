@@ -1,13 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { useStory, type TopicId } from '../state/useStory'
+import { RStudio } from '../r/RStudio'
 
 interface TopicSummary {
   id: TopicId
   number: string
   title: string
   bullets: string[]
-  scriptName?: string
-  codeSnippet?: string
   cvvNote?: boolean
 }
 
@@ -34,19 +33,6 @@ const SECTIONS_DATA: TopicSummary[] = [
       'Dispersão Territorial: Ocorrência homogênea em todas as regiões do país, refutando o mito de que o bullying restringe-se a periferias ou apenas escolas públicas.',
       'Urgência Universal: Todas as instituições de ensino demandam planos de ação estruturados, sem exceção de rede ou localidade.',
     ],
-    scriptName: 'Projeto_bullying.R',
-    codeSnippet: `# Mapeamento da Prevalência do Bullying
-library(ggplot2)
-library(dplyr)
-
-dados <- read.csv("PeNSE2024_bullying_base_categorica_modalidade_localidade_10000.csv")
-
-# Análise de proporção por modalidade
-ggplot(dados, aes(x = MODALIDADE, fill = BULLYING)) +
-  geom_bar(position = "fill") +
-  scale_fill_manual(values = c("#38bdf8", "#0284c7", "#0369a1")) +
-  theme_minimal() +
-  labs(title = "Proporção de Bullying por Modalidade", y = "Proporção", x = "Modalidade")`,
   },
   {
     id: 'pratica',
@@ -58,18 +44,6 @@ ggplot(dados, aes(x = MODALIDADE, fill = BULLYING)) +
       'Tipos de Agressão: Agressões físicas e verbais diretas continuam predominantes, somadas à expansão contínua do cyberbullying.',
       'Origem do Comportamento: Condutas agressivas frequentemente expressam conflitos domésticos ou fragilidade familiar, exigindo diálogo e mentoria em vez de apenas sanção.',
     ],
-    scriptName: 'Projeto_bullying.R',
-    codeSnippet: `# Padrões de Agressão e Frequência
-library(ggplot2)
-library(dplyr)
-
-dados <- read.csv("PeNSE2024_bullying_base_categorica_modalidade_localidade_10000.csv")
-
-# Distribuição de frequência dos atos violentos
-ggplot(dados, aes(x = FREQUENCIA_BULLYING)) +
-  geom_bar(fill = "#0284c7", alpha = 0.85) +
-  theme_minimal() +
-  labs(title = "Frequência dos Episódios de Bullying", x = "Frequência", y = "Registros")`,
   },
   {
     id: 'denuncias',
@@ -81,19 +55,6 @@ ggplot(dados, aes(x = FREQUENCIA_BULLYING)) +
       'Apoio Pessoal Direto: Entre todos os métodos de intervenção escolar, o apoio individualizado e direto à vítima demonstra ser o mais resolutivo.',
       'Prevenção Contínua: Criar núcleos de escuta ativa no cotidiano escolar reduz de forma significativa a reincidência de abusos.',
     ],
-    scriptName: 'grafico_canais_denuncia_G22B.R',
-    codeSnippet: `# Eficácia dos Canais de Denúncia e Apoio
-library(ggplot2)
-library(dplyr)
-
-dados_denuncia <- read.csv("TIC_Kids_Online_Brasil_2024_G22B.csv")
-
-# Canais a que os alunos recorrem
-ggplot(dados_denuncia, aes(x = reorder(CANAL, CASOS), y = CASOS)) +
-  geom_col(fill = "#0ea5e9", width = 0.6) +
-  coord_flip() +
-  theme_minimal() +
-  labs(title = "Canais Mais Procurados pelas Vítimas", x = "Canal", y = "Casos")`,
   },
   {
     id: 'saude',
@@ -105,18 +66,6 @@ ggplot(dados_denuncia, aes(x = reorder(CANAL, CASOS), y = CASOS)) +
       'Risco Extremo: A persistência do sofrimento pode evoluir para quadros graves de automutilação e ideação suicida.',
       'Urgência Absoluta: Danos potencialmente irreversíveis demandam que a prevenção seja tratada como prioridade máxima de saúde pública.',
     ],
-    scriptName: 'Projeto_bullying2.R',
-    codeSnippet: `# Impacto do Bullying na Saúde Mental
-library(ggplot2)
-library(dplyr)
-
-dados_saude <- read.csv("PeNSE2024_base_bullying_saude_mental_prevencao_condensada.csv")
-
-# Correlação com indicadores de sofrimento
-ggplot(dados_saude, aes(x = NIVEL_BULLYING, y = INDICE_SAUDE_MENTAL)) +
-  geom_boxplot(fill = "#e0f2fe", color = "#0284c7") +
-  theme_minimal() +
-  labs(title = "Correlação: Bullying x Sofrimento Mental", x = "Nível", y = "Índice")`,
     cvvNote: true,
   },
   {
@@ -368,14 +317,14 @@ export function Scrollytelling() {
 
             {/* ── SECTIONS 1 to 4: TÓPICOS COM RESUMO À ESQUERDA, 3D NO CENTRO E IDE R À DIREITA ── */}
             {hasIDE && (
-              <div
+                <div
                 style={{
                   width: '100%',
-                  maxWidth: '1360px',
+                  maxWidth: '1660px',
                   display: 'flex',
                   alignItems: 'stretch',
                   justifyContent: 'space-between',
-                  gap: 32,
+                  gap: 24,
                   position: 'relative',
                 }}
               >
@@ -383,7 +332,7 @@ export function Scrollytelling() {
                 <div
                   className="glass"
                   style={{
-                    flex: '1 1 380px',
+                    flex: '0 1 460px',
                     maxWidth: '460px',
                     borderRadius: 24,
                     padding: '28px',
@@ -479,39 +428,22 @@ export function Scrollytelling() {
                   )}
                 </div>
 
-                {/* Center Gap for the rotating 3D character */}
+                {/* Symmetrical center gap: equal breathing room on both sides of
+                    the character so it stays clearly visible between the cards */}
                 <div
                   style={{
-                    flex: '0 0 220px',
+                    flex: '0 0 clamp(340px, 32vw, 600px)',
                     pointerEvents: 'none',
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'center',
-                    paddingBottom: 24,
                   }}
-                >
-                  <span
-                    style={{
-                      background: 'rgba(255,255,255,0.45)',
-                      backdropFilter: 'blur(10px)',
-                      padding: '4px 14px',
-                      borderRadius: 999,
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      color: 'var(--text-soft)',
-                      border: '1px solid rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    3D Central em Tempo Real
-                  </span>
-                </div>
+                  aria-hidden="true"
+                />
 
                 {/* Right Card: IDE Interativo em R */}
                 <div
                   className="glass"
                   style={{
-                    flex: '1.2 1 480px',
-                    maxWidth: '560px',
+                    flex: '0 1 460px',
+                    maxWidth: '460px',
                     borderRadius: 24,
                     padding: '24px',
                     display: 'flex',
@@ -520,110 +452,7 @@ export function Scrollytelling() {
                     boxShadow: '0 20px 50px rgba(10,143,176,0.12)',
                   }}
                 >
-                  {/* IDE Header */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: 8,
-                      padding: '6px 12px',
-                      background: 'rgba(255,255,255,0.5)',
-                      borderRadius: 12,
-                      border: '1px solid rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text)' }}>
-                        📜 {item.scriptName}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '0.7rem',
-                          fontWeight: 700,
-                          color: '#16a34a',
-                          background: 'rgba(34, 197, 94, 0.12)',
-                          padding: '2px 8px',
-                          borderRadius: 999,
-                        }}
-                      >
-                        ● WebR Pronto
-                      </span>
-                    </div>
-                    <button
-                      className="btn-aqua"
-                      style={{ padding: '6px 14px', fontSize: '0.8rem' }}
-                      onClick={() => alert('Execução WebR interativa em tempo real na Fase 3!')}
-                    >
-                      ▶ Executar R
-                    </button>
-                  </div>
-
-                  {/* Code Editor Frame */}
-                  <div
-                    style={{
-                      borderRadius: 14,
-                      background: '#0f172a',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      overflow: 'hidden',
-                      boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        padding: '6px 12px',
-                        background: '#1e293b',
-                        color: '#94a3b8',
-                        fontSize: '0.72rem',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <span>Editor R</span>
-                      <span>Atalho: Ctrl + Enter</span>
-                    </div>
-                    <pre
-                      style={{
-                        margin: 0,
-                        padding: '12px',
-                        fontSize: '0.76rem',
-                        lineHeight: 1.55,
-                        color: '#f8fafc',
-                        fontFamily: 'Consolas, Monaco, monospace',
-                        overflowX: 'auto',
-                        maxHeight: '170px',
-                      }}
-                    >
-                      <code>{item.codeSnippet}</code>
-                    </pre>
-                  </div>
-
-                  {/* Plot Canvas Graphic Output Viewport */}
-                  <div
-                    style={{
-                      flex: 1,
-                      minHeight: '200px',
-                      borderRadius: 14,
-                      background: 'rgba(255,255,255,0.6)',
-                      border: '1px solid rgba(255,255,255,0.8)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '16px',
-                      textAlign: 'center',
-                      gap: 8,
-                    }}
-                  >
-                    <span style={{ fontSize: '1.6rem' }}>📊</span>
-                    <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text)' }}>
-                      Dispositivo Gráfico WebR (Canvas 800 × 500)
-                    </span>
-                    <span style={{ fontSize: '0.76rem', color: 'var(--text-soft)', maxWidth: 360 }}>
-                      O gráfico deste tópico será renderizado em tempo real via WebAssembly na Fase 3.
-                    </span>
-                  </div>
+                  <RStudio topicId={item.id} />
                 </div>
               </div>
             )}
@@ -639,6 +468,9 @@ export function Scrollytelling() {
                   justifyContent: 'space-between',
                   gap: 32,
                   position: 'relative',
+                  opacity: activeSection === 5 ? 1 : 0,
+                  transform: activeSection === 5 ? 'translateY(0)' : 'translateY(28px)',
+                  transition: 'opacity 0.9s ease, transform 0.9s ease',
                 }}
               >
                 {/* Left: Summary Card (ONLY SUMMARY AS REQUESTED) */}
@@ -742,32 +574,15 @@ export function Scrollytelling() {
                   </div>
                 </div>
 
-                {/* Right / Center Gap: The 3D House sanctuary model is showcased on the grass */}
+                {/* Right spacer: keeps the summary card on the left while the
+                    3D house sanctuary model is showcased on the right / grass */}
                 <div
                   style={{
                     flex: '1 1 400px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     pointerEvents: 'none',
                   }}
-                >
-                  <div
-                    style={{
-                      background: 'rgba(255,255,255,0.4)',
-                      backdropFilter: 'blur(12px)',
-                      padding: '8px 20px',
-                      borderRadius: 999,
-                      border: '1px solid rgba(255,255,255,0.7)',
-                      fontSize: '0.85rem',
-                      fontWeight: 700,
-                      color: 'var(--text)',
-                      boxShadow: '0 6px 20px rgba(10,143,176,0.12)',
-                    }}
-                  >
-                    🏡 A Escola como Segunda Família
-                  </div>
-                </div>
+                  aria-hidden="true"
+                />
               </div>
             )}
           </section>
