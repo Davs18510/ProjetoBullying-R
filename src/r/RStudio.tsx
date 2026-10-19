@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import CodeMirror from '@uiw/react-codemirror'
 import { StreamLanguage } from '@codemirror/language'
@@ -19,13 +19,15 @@ export function RStudio({ topicId }: RStudioProps) {
   const [runState, setRunState] = useState<RunState>('idle')
   const [status, setStatus] = useState('Ambiente R pronto para execução.')
   const [consoleText, setConsoleText] = useState('')
-  const [hasPlot, setHasPlot] = useState(false)
-  const [plotUrl, setPlotUrl] = useState('')
+  const [plotUrls, setPlotUrls] = useState<string[]>([])
+  const [plotIndex, setPlotIndex] = useState(0)
   const [expanded, setExpanded] = useState(false)
   const [shown, setShown] = useState(false)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const extensions = useMemo(() => [StreamLanguage.define(r)], [])
+
+  const hasPlot = plotUrls.length > 0
+  const plotUrl = plotUrls[plotIndex] ?? ''
 
   // Two-step mount so the lightbox animates smoothly in and out.
   const openModal = useCallback(() => {
@@ -38,19 +40,31 @@ export function RStudio({ topicId }: RStudioProps) {
     window.setTimeout(() => setExpanded(false), 260)
   }, [])
 
+  const showPreviousPlot = useCallback(() => {
+    setPlotIndex((index) => Math.max(0, index - 1))
+  }, [])
+
+  const showNextPlot = useCallback(() => {
+    setPlotIndex((index) => Math.min(plotUrls.length - 1, index + 1))
+  }, [plotUrls.length])
+
   useEffect(() => {
     if (!expanded) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') closeModal()
+      if (event.key === 'ArrowLeft') showPreviousPlot()
+      if (event.key === 'ArrowRight') showNextPlot()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [expanded, closeModal])
+  }, [expanded, closeModal, showPreviousPlot, showNextPlot])
 
   const handleRun = useCallback(async () => {
     if (!task || runState === 'running') return
     setRunState('running')
     setConsoleText('')
+    setPlotUrls([])
+    setPlotIndex(0)
     setStatus('Preparando execução...')
     try {
       const { consoleText: output, images } = await runRTask(
@@ -58,9 +72,8 @@ export function RStudio({ topicId }: RStudioProps) {
         { onStatus: setStatus }
       )
       setConsoleText(output.trim() || '(análise executada sem saída de texto)')
-      const canvas = canvasRef.current
-      const image = images[images.length - 1]
-      if (canvas && image) {
+      const urls = images.map((image) => {
+        const canvas = document.createElement('canvas')
         canvas.width = image.width
         canvas.height = image.height
         const ctx = canvas.getContext('2d')
@@ -68,9 +81,10 @@ export function RStudio({ topicId }: RStudioProps) {
           ctx.clearRect(0, 0, canvas.width, canvas.height)
           ctx.drawImage(image, 0, 0)
         }
-        setPlotUrl(canvas.toDataURL('image/png'))
-        setHasPlot(true)
-      }
+        return canvas.toDataURL('image/png')
+      })
+      setPlotUrls(urls)
+      setPlotIndex(0)
       setRunState('done')
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
@@ -242,7 +256,11 @@ export function RStudio({ topicId }: RStudioProps) {
           <span>📊 Dispositivo gráfico (WebR)</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ color: 'var(--text-soft)' }}>
-              {hasPlot ? 'renderizado' : 'aguardando'}
+              {hasPlot
+                ? plotUrls.length > 1
+                  ? `gráfico ${plotIndex + 1}/${plotUrls.length}`
+                  : 'renderizado'
+                : 'aguardando'}
             </span>
             <button
               className="btn-aqua"
@@ -261,6 +279,53 @@ export function RStudio({ topicId }: RStudioProps) {
             </button>
           </div>
         </div>
+
+        {plotUrls.length > 1 && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 6,
+              padding: '6px 12px',
+              background: 'rgba(255,255,255,0.35)',
+              borderBottom: '1px solid rgba(255,255,255,0.6)',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                color: 'var(--text-soft)',
+                marginRight: 2,
+              }}
+            >
+              Gráficos gerados:
+            </span>
+            {plotUrls.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className="plot-nav"
+                onClick={() => setPlotIndex(i)}
+                aria-label={`Ver gráfico ${i + 1}`}
+                aria-pressed={i === plotIndex}
+                style={
+                  i === plotIndex
+                    ? {
+                        background: 'linear-gradient(135deg, #38e0ee, #0284c7)',
+                        borderColor: 'transparent',
+                        color: '#fff',
+                      }
+                    : undefined
+                }
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div
           style={{
             flex: 1,
@@ -270,16 +335,20 @@ export function RStudio({ topicId }: RStudioProps) {
             padding: 8,
           }}
         >
-          <canvas
-            ref={canvasRef}
-            style={{
-              display: hasPlot ? 'block' : 'none',
-              maxWidth: '100%',
-              maxHeight: '100%',
-              height: 'auto',
-              borderRadius: 8,
-            }}
-          />
+          {hasPlot && (
+            <img
+              key={plotIndex}
+              className="plot-swap"
+              src={plotUrl}
+              alt={`Gráfico ${plotIndex + 1} gerado em R`}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                height: 'auto',
+                borderRadius: 8,
+              }}
+            />
+          )}
           <div
             style={{
               display: hasPlot ? 'none' : 'flex',
@@ -361,16 +430,75 @@ export function RStudio({ topicId }: RStudioProps) {
                   ✕ Fechar
                 </button>
               </div>
-              <img
-                src={plotUrl}
-                alt="Gráfico gerado em R"
+              <div
                 style={{
-                  maxWidth: '88vw',
-                  maxHeight: '78vh',
-                  objectFit: 'contain',
-                  borderRadius: 12,
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-              />
+              >
+                <img
+                  key={plotIndex}
+                  className="plot-swap"
+                  src={plotUrl}
+                  alt={`Gráfico ${plotIndex + 1} gerado em R`}
+                  style={{
+                    maxWidth: '88vw',
+                    maxHeight: '78vh',
+                    objectFit: 'contain',
+                    borderRadius: 12,
+                  }}
+                />
+                {plotUrls.length > 1 && (
+                  <button
+                    type="button"
+                    className="plot-nav plot-nav-lg"
+                    onClick={showPreviousPlot}
+                    disabled={plotIndex === 0}
+                    aria-label="Gráfico anterior"
+                    title="Gráfico anterior"
+                    style={{
+                      position: 'absolute',
+                      left: 12,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                    }}
+                  >
+                    ◀
+                  </button>
+                )}
+                {plotUrls.length > 1 && (
+                  <button
+                    type="button"
+                    className="plot-nav plot-nav-lg"
+                    onClick={showNextPlot}
+                    disabled={plotIndex === plotUrls.length - 1}
+                    aria-label="Próximo gráfico"
+                    title="Próximo gráfico"
+                    style={{
+                      position: 'absolute',
+                      right: 12,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                    }}
+                  >
+                    ▶
+                  </button>
+                )}
+              </div>
+              {plotUrls.length > 1 && (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    color: 'var(--text-soft)',
+                  }}
+                >
+                  Gráfico {plotIndex + 1} de {plotUrls.length}
+                </div>
+              )}
             </div>
           </div>,
           document.body

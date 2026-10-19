@@ -114,6 +114,69 @@ body {
   transform: translateY(0);
 }
 
+/* Smooth swap transition between plots in the R IDE viewport */
+@keyframes plotFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.plot-swap {
+  animation: plotFadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Compact navigation buttons for switching plots */
+.plot-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(2, 132, 199, 0.35);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.plot-nav:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.22);
+}
+
+.plot-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Larger navigation arrows used inside the enlarged plot lightbox */
+.plot-nav-lg {
+  min-width: 46px;
+  height: 46px;
+  padding: 0 14px;
+  font-size: 1.15rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  z-index: 2;
+}
+
+.plot-nav-lg:hover:not(:disabled) {
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(2, 132, 199, 0.4);
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
